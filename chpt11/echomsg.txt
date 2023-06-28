@@ -1,0 +1,3 @@
+hello
+close file in order to write in !
+bye
