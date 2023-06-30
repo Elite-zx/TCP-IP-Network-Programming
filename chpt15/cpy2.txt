@@ -1,0 +1,20 @@
+The initial motivation for C++ templates was straightforward: to make
+it possible to create type-safe containers like vector, list, and map. The
+more people worked with templates, however, the wider the variety of
+things they found they could do with them. Containers were good, but
+generic programming — the ability to write code that is independent of
+the types of objects being manipulated — was even better. STL algo-
+rithms like for_each, find, and merge are examples of such program-
+ming. Ultimately, it was discovered that the C++ template mechanism
+is itself Turing-complete: it can be used to compute any computable
+value. That led to template metaprogramming: the creation of pro-
+grams that execute inside C++ compilers and that stop running when
+compilation is complete. These days, containers are but a small part
+of the C++ template pie. Despite the breadth of template applications,
+however, a set of core ideas underlie all template-based programming.
+Those ideas are the focus of this chapter.
+Templates and Generic Programming
+This chapter won’t make you an expert template programmer, but it
+will make you a better one. It will also give you information you need
+to expand your template-programming boundaries as far as you
+desire.

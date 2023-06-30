@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     exit(1);
   }
 
+
   struct sockaddr_in serv_addr;
   memset(&serv_addr, 0, sizeof(serv_addr));
   serv_addr.sin_family = AF_INET;
