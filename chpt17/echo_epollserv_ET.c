@@ -1,4 +1,6 @@
 #include <arpa/inet.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,19 +78,28 @@ int main(int argc, char* argv[]) {
             accept(serv_sock, (struct sockaddr*)&clnt_addr, &clnt_addr_size);
         if (clnt_sock == -1) continue;
 
-        register_event.events = EPOLLIN;
+        /*non block I/O*/
+        int flag = fcntl(clnt_sock, F_GETFL);
+        fcntl(clnt_sock, flag | O_NONBLOCK);
+
+        /* Edge Trigger*/
+        register_event.events = EPOLLIN | EPOLLET;
         register_event.data.fd = clnt_sock;
         epoll_ctl(epoll_fd, EPOLL_CTL_ADD, clnt_sock, &register_event);
         printf("new client %d connected!\n", clnt_sock);
       } else {
-        int str_len = read(result_event[i].data.fd, buf, BUFSIZE);
-        if (str_len == 0)  // EOF
-        {
-          epoll_ctl(epoll_fd, EPOLL_CTL_DEL, result_event[i].data.fd, NULL);
-          close(result_event[i].data.fd);
-          printf("close client %d!\n", result_event[i].data.fd);
-        } else {
-          write(result_event[i].data.fd, buf, str_len);
+        while (1) {
+          int str_len = read(result_event[i].data.fd, buf, BUFSIZE);
+          if (str_len == 0)  // EOF
+          {
+            epoll_ctl(epoll_fd, EPOLL_CTL_DEL, result_event[i].data.fd, NULL);
+            close(result_event[i].data.fd);
+            printf("close client %d!\n", result_event[i].data.fd);
+          } else if (str_len < 0 && errno == EAGAIN) {
+            break;
+          } else {
+            write(result_event[i].data.fd, buf, str_len);
+          }
         }
       }
     }
