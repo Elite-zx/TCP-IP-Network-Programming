@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
   sigemptyset(&act.sa_mask);  // set 0
   sigaction(SIGCHLD, &act, 0);
 
-  char buf[BUFSIZE];
+ char buf[BUFSIZE];
   /*I/O Multiplexing*/
   fd_set _read, cp_read;
   FD_ZERO(&_read);
