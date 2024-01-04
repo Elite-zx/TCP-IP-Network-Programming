@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-const int BUFSIZE = 5;
+const int BUFSIZE = 40;
 const int EPOLL_SIZE = 24;
 void error_handling(const char* message);
 void childproc_handler(int sig);
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 
         /*non block I/O*/
         int flag = fcntl(clnt_sock, F_GETFL);
-        fcntl(clnt_sock, flag | O_NONBLOCK);
+        fcntl(clnt_sock, F_SETFL, flag | O_NONBLOCK);
 
         /* Edge Trigger*/
         register_event.events = EPOLLIN | EPOLLET;
