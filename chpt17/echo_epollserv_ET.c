@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-const int BUFSIZE = 40;
+const int BUFSIZE = 4;
 const int EPOLL_SIZE = 24;
 void error_handling(const char* message);
 void childproc_handler(int sig);
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
         if (clnt_sock == -1) continue;
 
         /*non block I/O*/
-        int flag = fcntl(clnt_sock, F_GETFL);
+        int flag = fcntl(clnt_sock, F_GETFL, 0);
         fcntl(clnt_sock, F_SETFL, flag | O_NONBLOCK);
 
         /* Edge Trigger*/
@@ -95,8 +95,9 @@ int main(int argc, char* argv[]) {
             epoll_ctl(epoll_fd, EPOLL_CTL_DEL, result_event[i].data.fd, NULL);
             close(result_event[i].data.fd);
             printf("close client %d!\n", result_event[i].data.fd);
-          } else if (str_len < 0 && errno == EAGAIN) {
             break;
+          } else if (str_len < 0) {
+            if (errno == EAGAIN) break;
           } else {
             write(result_event[i].data.fd, buf, str_len);
           }
